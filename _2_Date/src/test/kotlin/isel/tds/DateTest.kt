@@ -2,15 +2,17 @@ package isel.tds
 
 import isel.tds.isel.tds.Date
 import isel.tds.isel.tds.addDays
+import isel.tds.isel.tds.compareTo
 import isel.tds.isel.tds.isLastDayOfMonth
 import isel.tds.isel.tds.isLeapYear
 import isel.tds.isel.tds.plus
+import kotlin.hashCode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-
+import kotlin.text.equals
 
 
 class DateTest {
@@ -110,9 +112,125 @@ class DateTest {
     fun `test add days`(){
         val dateAdd = Date(2024, 1,1).addDays(5)
         assertEquals(6, dateAdd.day)
+        assertEquals(1, dateAdd.month)
+        assertEquals(2024, dateAdd.year)
 
         val dateAddUsingOperator = Date(2024, 1,1) + 5
         assertEquals(6, dateAddUsingOperator.day)
+        assertEquals(1, dateAddUsingOperator.month)
+        assertEquals(2024, dateAddUsingOperator.year)
+    }
+
+    @Test
+    fun `test add days that increment the month`(){
+        val dateAdd = Date(2024, 1,31).addDays(1)
+        assertEquals(1, dateAdd.day)
+        assertEquals(2, dateAdd.month)
+        assertEquals(2024, dateAdd.year)
+
+        val dateAddUsingOperator = Date(2024, 1,31) + 1
+        assertEquals(1, dateAddUsingOperator.day)
+        assertEquals(2, dateAddUsingOperator.month)
+        assertEquals(2024, dateAddUsingOperator.year)
+    }
+
+    @Test
+    fun `test add days that increment the year`(){
+        val dateAdd = Date(2024, 12,31).addDays(1)
+        assertEquals(1, dateAdd.day)
+        assertEquals(1, dateAdd.month)
+        assertEquals(2025, dateAdd.year)
+
+        val dateAddUsingOperator = Date(2024, 12,31) + 1
+        assertEquals(1, dateAddUsingOperator.day)
+        assertEquals(1, dateAddUsingOperator.month)
+        assertEquals(2025, dateAddUsingOperator.year)
+    }
+
+    @Test
+    fun `test add many days that increment the year`(){
+        val dateAdd = Date(2024, 1,1).addDays(366)
+        assertEquals(1, dateAdd.day)
+        assertEquals(1, dateAdd.month)
+        assertEquals(2025, dateAdd.year)
+
+        val dateAddUsingOperator = Date(2024, 1,1) + 366
+        assertEquals(1, dateAddUsingOperator.day)
+        assertEquals(1, dateAddUsingOperator.month)
+        assertEquals(2025, dateAddUsingOperator.year)
+    }
+
+    @Test
+    fun `test add 0 days`(){
+        val dateAdd = Date(2024, 1,31).addDays(0)
+        assertEquals(31, dateAdd.day)
+        assertEquals(1, dateAdd.month)
+        assertEquals(2024, dateAdd.year)
+
+        val dateAddUsingOperator = Date(2024, 1,31) + 0
+        assertEquals(31, dateAddUsingOperator.day)
+        assertEquals(1, dateAddUsingOperator.month)
+        assertEquals(2024, dateAddUsingOperator.year)
+    }
+
+    @Test
+    fun `test add days with Int first`(){
+        val date = 5 + Date(2024, 2, 1)
+        assertEquals(6, date.day)
+    }
+
+
+    @Test
+    fun `test date equality`() {
+        val date1 = Date(2024, 2, 1)
+        val date2 = Date(2024, 2, 1)
+        val date3 = Date(2024, 2, 2)
+
+        assertTrue(date1 == date2)
+        assertTrue(date1.equals(date2))
+//        assertFalse(date1 === date2) //Not possible for value classes
+        assertFalse(date1 == date3)
+        assertFalse(date1.equals(date3))
+//        assertFalse(date1 === date3) //Not possible for value classes
+    }
+
+
+    @Test
+    fun `test date hashCode`() {
+        val date1 = Date(2024, 2, 1)
+        val date2 = Date(2024, 2, 1)
+        val date3 = Date(2024, 2, 2)
+
+        assertTrue(date1.hashCode().equals(date2.hashCode()))
+//        assertFalse(date1 === date2) //Not possible for value classes
+        assertFalse(date1.hashCode().equals(date3.hashCode()))
+//        assertFalse(date1 === date3) //Not possible for value classes
+    }
+
+    @Test
+    fun `test compare dates`(){
+        val date1 = Date(2024, 2,1)
+        val date2 = Date(2024, 2,1)
+        val date3 = Date(2024, 2,2)
+
+        assertFalse( date1 < date2)
+        assertTrue( date1 <= date2)
+        assertTrue( date1 <= date3)
+        assertTrue( date1 < date3)
+        assertFalse( date1 > date3)
+        assertTrue( date1 >= date2)
+        assertFalse( date1 >= date3)
+        assertFalse( date1 > date3)
+        assertTrue( date3 > date1)
+    }
+
+    @Test
+    fun `test date toString`(){
+        val date = Date(2025, 2,1)
+        println(date)
+        println(date.toString())
+
+        assertEquals("2025-02-01", date.toString())
     }
 }
 

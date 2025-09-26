@@ -49,14 +49,75 @@ package isel.tds.isel.tds
 //    }
 //}
 
-class Date(val year: Int, val month: Int = 1, val day: Int = 1){
+//class Date(val year: Int, val month: Int = 1, val day: Int = 1){
+//    init{
+//        require( year>0){"year is negative or zero"}
+//        require(month>0 && month <=12 ){"month is negative or zero"}
+//        require(day>0 && day <= lastDayOfMonth){"day is negative or zero"}
+//    }
+//
+//     operator override fun equals(other: Any?): Boolean =
+//        other is Date &&
+//                year == other.year && month == other.month && day == other.day
+//
+//    override fun hashCode(): Int =
+//        (year * 12 + month * 31) + day
+//
+//    override fun toString(): String
+//        = "$year-" + "%02d-%02d".format(month, day)
+//}
+private const val DAY_BITS = 5 // 0..31
+private const val MONTH_BITS = 4 // 0..15
+private const val YEAR_BITS = 12 // 0..4k
 
+//class Date private constructor(private val bits: Int){
+//
+//    constructor(year: Int, month: Int = 1, day: Int = 1):
+//            this(year shl (MONTH_BITS + DAY_BITS) or (month shl DAY_BITS) or day)
+//    {
+//        require( year>0){"year is negative or zero"}
+//        require(month>0 && month <=12 ){"month is negative or zero"}
+//        require(day>0 && day <= lastDayOfMonth){"day is negative or zero"}
+//    }
+//
+//    val year: Int get() = bits shr (MONTH_BITS + DAY_BITS)
+//    val month: Int get() = bits shr DAY_BITS and ((1 shl MONTH_BITS) - 1)
+//    val day: Int get() = bits and ((1 shl DAY_BITS) - 1)
+//
+//    operator override fun equals(other: Any?): Boolean =
+//        other is Date &&
+//                year == other.year && month == other.month && day == other.day
+//
+//    override fun hashCode(): Int =
+//        (year * 12 + month * 31) + day
+//
+//    override fun toString(): String
+//            = "$year-" + "%02d-%02d".format(month, day)
+//}
+@JvmInline
+value class Date private constructor(private val bits: Int){
 
-    init{
+    constructor(year: Int, month: Int = 1, day: Int = 1):
+            this(year shl (MONTH_BITS + DAY_BITS) or (month shl DAY_BITS) or day)
+    {
         require( year>0){"year is negative or zero"}
         require(month>0 && month <=12 ){"month is negative or zero"}
         require(day>0 && day <= lastDayOfMonth){"day is negative or zero"}
     }
+
+    val year: Int get() = bits shr (MONTH_BITS + DAY_BITS)
+    val month: Int get() = bits shr DAY_BITS and ((1 shl MONTH_BITS) - 1)
+    val day: Int get() = bits and ((1 shl DAY_BITS) - 1)
+
+//    operator override fun equals(other: Any?): Boolean =
+//        other is Date &&
+//                year == other.year && month == other.month && day == other.day
+
+//    override fun hashCode(): Int =
+//        (year * 12 + month * 31) + day
+
+    override fun toString(): String
+            = "$year-" + "%02d-%02d".format(month, day)
 }
 
 val Date.isLeapYear: Boolean
@@ -69,11 +130,29 @@ val Date.isLastDayOfMonth: Boolean
 private val Date.lastDayOfMonth: Int
     get() = if( month==2 && this.isLeapYear) 29 else daysOfMonth[this.month-1]
 
-fun Date.addDays(daystoAdd: Int) = Date(1,1,1)
+fun Date.addDays(daysToAdd: Int): Date = when{
+    day + daysToAdd <= lastDayOfMonth -> Date(year, month, day + daysToAdd)
+    month < 12 -> Date( year, month +1, 1).addDays(calculateRemainderDays(daysToAdd))
+    else -> Date( year+1, 1, 1).addDays(calculateRemainderDays(daysToAdd))
+}
+tailrec fun Date.addDaysNotRecursive(daysToAdd: Int): Date = when{
+    day + daysToAdd <= lastDayOfMonth -> Date(year, month, day + daysToAdd)
+    month < 12 -> Date( year, month +1, 1).addDaysNotRecursive(calculateRemainderDays(daysToAdd))
+    else -> Date( year+1, 1, 1).addDaysNotRecursive(calculateRemainderDays(daysToAdd))
+}
 
-operator fun Date.plus(daystoAdd: Int) = Date(1,1,1)
+private fun Date.calculateRemainderDays(daysToAdd: Int): Int
+    = daysToAdd - (lastDayOfMonth - day + 1)
 
 
+operator fun Date.plus(daysToAdd: Int) = this.addDays(daysToAdd)
+operator fun Int.plus(date: Date) = date.addDays(this)
+
+operator fun Date.compareTo(otherDate: Date): Int = when{
+    year != otherDate.year -> year - otherDate.year
+    month!=otherDate.month -> month - otherDate.month
+    else -> day - otherDate.day
+}
 
 
 
