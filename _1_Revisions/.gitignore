@@ -50,3 +50,6 @@ bin/
 /.idea/misc.xml
 /.idea/kotlinc.xml
 /.idea/vcs.xml
+
+.idea
+**/.idea

@@ -47,3 +47,6 @@ bin/
 /.idea/copilot.data.migration.agent.xml
 /.idea/copilot.data.migration.edit.xml
 /.idea/kotlinc.xml
+
+.idea
+**/.idea
