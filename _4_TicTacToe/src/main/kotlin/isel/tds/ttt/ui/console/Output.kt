@@ -1,12 +1,21 @@
 package isel.tds.ttt.ui.console
 
-import isel.tds.ttt.model.BOARD_SIZE
+import isel.tds.ttt.model.BOARD_SIDE_SIZE
 import isel.tds.ttt.model.Game
+import isel.tds.ttt.model.Player
+import isel.tds.ttt.model.isDraw
+import isel.tds.ttt.model.isWinner
 
 fun Game.show(){
-    this.board.chunked(BOARD_SIZE).forEachIndexed { rowIdx, rowList ->
-        println(rowList.joinToString(" | "))
-        if( rowIdx <BOARD_SIZE-1) println("---+---+---")
+    this.board.chunked(BOARD_SIDE_SIZE).forEachIndexed { rowIdx, rowList ->
+        println(" "+rowList.map{p->p?.toString()?:" "}.joinToString(" | "))
+        if( rowIdx <BOARD_SIDE_SIZE-1) println("---+---+---")
     }
-    println("turn: $turn")
+    val messageToShow: String = when{
+        isWinner(Player.X) -> "Winner X"
+        isWinner(Player.O) -> "Winner O"
+        isDraw() -> "Draw"
+        else -> "turn: $turn"
+    }
+    println(messageToShow)
 }
