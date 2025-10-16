@@ -11,42 +11,24 @@ object AppTTTConsole {
 //class AppTTTConsole {
 
 //    companion object {
-        fun run() {
-            var game: Game? = null
-            val commands: Map<String, Command> = getAllCommands()
-            while (true) {
-                try {
-                    print("$ ")
-                    val (cmdStr, args) = readCommand()
-                    val command: Command? = commands[cmdStr]
-                    if( command!=null ) {
-                        game = command.execute(game, args)
-                    }else{
-                        println("Invalid command $cmdStr")
-                    }
-//                    when (input[0]) {
-//                        "NEW" ->
-//                            if (game == null) game = Game()
-//                            else game = game.restartGame()
-//
-//                        "PLAY" -> {
-//                            checkNotNull(game) { "Game not started" }
-//                            //                    val pos = input[1].toInt()
-//                            val pos = input[1].toPosition()
-//                            if (game.canPlay(pos))
-//                                game = game.play(pos)
-//                            else println("play not valid")
-//                        }
-//
-//                        "EXIT" -> break
-//                        else -> println("Invalid command")
-//                    }
-                    game?.show()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    println("Error occurred: ${e.message}")
+    fun run() {
+        var game: Game? = null
+        val commands: Map<String, Command> = getAllCommands()
+        while (true) {
+            try {
+                print("$ ")
+                val (cmdStr, args) = readCommand()
+                val command: Command? = commands[cmdStr]
+                if( command!=null ) {
+                    game = command.execute(game, args)
+                }else{
+                    println("Invalid command $cmdStr")
                 }
+                game?.show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                println("Error occurred: ${e.message}")
             }
         }
-//    }
+    }
 }

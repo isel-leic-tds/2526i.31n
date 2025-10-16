@@ -15,11 +15,11 @@ abstract class Command(val commandHelpMsg: String) {
 
 object Play: Command("Play <positionIndex> - plays the game in the position. ex: PLAY 0"){
     override fun execute(game: Game?, args: List<String>): Game? {
-        val pos = args[0].toPosition()
-        if (game!=null && game.canPlay(pos))
-            return game.play(pos)
-        else println("play not valid")
-        return game
+        val arg = requireNotNull(args.firstOrNull() ) { "Missing position" }
+        val pos = arg.toPosition()
+//        return checkNotNull(game){"Game not started"}.play(pos)
+        checkNotNull(game){"Game not started"}
+        return game.play(pos)
     }
 }
 
@@ -48,5 +48,4 @@ fun getAllCommands(): Map<String, Command> = mapOf(
     "NEW" to New,
     "HELP" to Help,
     "EXIT" to Exit
-
 )
