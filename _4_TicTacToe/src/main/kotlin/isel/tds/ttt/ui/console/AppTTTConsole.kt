@@ -20,7 +20,7 @@ object AppTTTConsole {
                 val (cmdStr, args) = readCommand()
                 val command: Command? = commands[cmdStr]
                 if( command!=null ) {
-                    game = command.execute(game, args)
+                    game = command.execute( args, game)
                 }else{
                     println("Invalid command $cmdStr")
                 }
