@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+state Run
+state Win
+state Draw
+
+[*] -> Run
+
+state Play <<choice>>
+Run --> Play: play()
+Play -> Draw : [draw]
+Play -left-> Win : [winner]
+Play -up-> Run : [else]
+
+Win -up-> Run: new()
+Draw -up-> Run: new()
+Run -down-> Win: new()
+
+@enduml
