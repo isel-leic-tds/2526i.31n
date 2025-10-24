@@ -5,6 +5,8 @@ import isel.tds.ttt.model.canPlay
 import isel.tds.ttt.model.play
 import isel.tds.ttt.model.restartGame
 import isel.tds.ttt.model.toPosition
+import isel.tds.ttt.storage.GameSerializer
+import isel.tds.ttt.storage.TextFileStorage
 
 object AppTTTConsole {
 // We can have an alternative solution using the companion object
@@ -13,7 +15,8 @@ object AppTTTConsole {
 //    companion object {
     fun run() {
         var game: Game? = null
-        val commands: Map<String, Command> = getAllCommands()
+        val st = TextFileStorage<String, Game>("savedGames", GameSerializer)
+        val commands: Map<String, Command> = getAllCommands(st)
         while (true) {
             try {
                 print("$ ")
