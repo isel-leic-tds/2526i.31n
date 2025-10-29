@@ -22,7 +22,7 @@ class TextFileStorage<Key, Data>(
     private fun Path.isDirectory() = fs.metadata(this).isDirectory
     private fun Path.createDirectory() = fs.createDirectory(this)
     private fun Path.exists() = fs.exists(this)
-    private fun Path.writeText(data: Data): Unit{
+    private fun Path.writeText(data: Data){
         fs.write(this){this.writeUtf8(serializer.serialize(data)) }
     }
     private fun Path.delete(): Unit = fs.delete(this)

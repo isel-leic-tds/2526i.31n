@@ -1,7 +1,6 @@
 package isel.tds.ttt.storage
 
 import isel.tds.ttt.model.Game
-import isel.tds.ttt.model.Player
 import isel.tds.ttt.model.Player.O
 import isel.tds.ttt.model.Player.X
 import isel.tds.ttt.model.Run

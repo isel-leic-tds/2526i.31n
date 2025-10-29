@@ -1,6 +1,5 @@
 package isel.tds.ttt.storage
 
-import org.w3c.dom.Text
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

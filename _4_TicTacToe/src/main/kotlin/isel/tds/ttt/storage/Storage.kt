@@ -8,7 +8,7 @@ interface Storage<Key, Data> {
      * @param data the data to store.
      * @throws IllegalStateException if the key already exists.
      */
-    fun create(k: Key, data: Data): Unit
+    fun create(k: Key, data: Data)
     /**
      * Reads an entry from the storage.
      * @param k the key of the entry.

@@ -1,8 +1,6 @@
 package isel.tds.ttt.model
 
 import isel.tds.ttt.model.Player.X
-import kotlin.plus
-import kotlin.text.associateWith
 
 val EMPTY = null
 const val BOARD_SIDE_SIZE = 3
