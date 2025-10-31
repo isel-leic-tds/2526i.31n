@@ -13,6 +13,7 @@ class ClashRun(
 
 fun Clash.play(pos: Position): Clash = when(this){
         is ClashRun -> {
+            check((game.gameState as Run).turn == sidePlayer) {"Not your turn"}
             val newGame = game.play(pos)
             st.update(name, newGame)
             ClashRun(st, name, sidePlayer, newGame)

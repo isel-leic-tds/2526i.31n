@@ -63,7 +63,7 @@ private fun beginCommand(commandHelpMsg: String, exec: Clash.(Name) -> Clash) =
 
 fun getAllCommands(): Map<String, Command> = mapOf(
     "PLAY" to Play,
-//    "NEW" to New,
+    "NEW" to New,
     "HELP" to Help,
     "SCORE" to Score,
     "START" to beginCommand("START <name> - Starts a game with the name ") { name -> start(name)},
