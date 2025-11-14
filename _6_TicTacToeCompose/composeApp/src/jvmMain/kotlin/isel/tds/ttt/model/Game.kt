@@ -14,7 +14,7 @@ data class Game(
     val currentGameStarterPlayer: Player = X,
 //    val turn: Player = currentGameStarterPlayer,
     val board: Board = emptyMap(),
-    val gameState: GameState = Run( turn=currentGameStarterPlayer),
+    val gameState: GameState = Run(turn = currentGameStarterPlayer),
     val score: Score = (Player.entries + null).associateWith { 0 }
 )
 
@@ -23,11 +23,11 @@ private fun Score.advance(player: Player?): Score =
 
 sealed class GameState
 
-data class Win(val winner: Player): GameState()
-data object Draw: GameState()
-data class Run(val turn: Player): GameState()
+data class Win(val winner: Player) : GameState()
+data object Draw : GameState()
+data class Run(val turn: Player) : GameState()
 
-fun Game.play(pos: Position): Game = when(gameState){
+fun Game.play(pos: Position): Game = when (gameState) {
     is Run -> {
         check(canPlay(pos)) { "Position not empty" }
 //        val newBoard = board.mapIndexed { idx, cellContent ->
@@ -36,29 +36,32 @@ fun Game.play(pos: Position): Game = when(gameState){
 //        }
         val newBoard = board + (pos to gameState.turn)
 //        val newBoard = board + Pair(pos, gameState.turn)
-        val newGameState = when{
-            newBoard.winnerIn( pos) -> Win( gameState.turn)
-            isDraw() -> Draw
+        val newGameState = when {
+            newBoard.winnerIn(pos) -> Win(gameState.turn)
+            newBoard.isDraw() -> Draw
             else -> Run(gameState.turn.other())
         }
-        val newScore = when(newGameState) {
+        val newScore = when (newGameState) {
             is Win -> score.advance(newGameState.winner)
             is Draw -> score.advance(null)
             is Run -> score
         }
 
-        this.copy(board = newBoard, gameState = newGameState, score=newScore)
+        this.copy(board = newBoard, gameState = newGameState, score = newScore)
     }
+
     is Win, is Draw -> error("Game is already finished")
 }
 
 fun Game.canPlay(pos: Position): Boolean = !board.containsKey(pos)
 
 
-fun Game.restartGame(): Game
-{
-    check( this.gameState is Run)
-    return Game(currentGameStarterPlayer = currentGameStarterPlayer.other(), score = score.advance(this.gameState.turn.other()))
+fun Game.restartGame(): Game {
+    check(this.gameState is Run)
+    return Game(
+        currentGameStarterPlayer = currentGameStarterPlayer.other(),
+        score = score.advance(this.gameState.turn.other())
+    )
 }
 
 //fun Board.isWinner(p: Player): Boolean =
@@ -82,10 +85,11 @@ fun Board.winnerIn(pos: Position): Boolean {
         { it.slash }
     ).any { playerPositions.count(it) == BOARD_SIDE_SIZE }
 }
+
 /**
  * IsDraw is called on a fully filled board only when there are no winners,
  * or when the board is not full and no winners
  */
 
-fun Game.isDraw(): Boolean = board.size == BOARD_TOTAL_SIZE
+fun Board.isDraw(): Boolean = this.size == BOARD_TOTAL_SIZE
 
