@@ -7,6 +7,7 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import isel.tds.ttt.model.Game
 import isel.tds.ttt.model.play
+import isel.tds.ttt.model.restartGame
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -14,26 +15,25 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun FrameWindowScope.TDSApp(onExit: () -> Unit) {
     MaterialTheme {
         Column {
+            var game by remember { mutableStateOf(Game()) }
+            var showScoreDialog by remember { mutableStateOf(false) }
             MenuBar {
                 Menu("Game") {
+                    Item("New game", onClick = { game = game.restartGame() })
+                    Item("Show score", onClick = { showScoreDialog = !showScoreDialog })
                     Item("Exit", onClick = onExit)
                 }
             }
-            var game by remember { mutableStateOf(Game()) }
 
             BoardView(game.board, { pos -> game = game.play(pos) })
             StatusBarView(game.gameState)
 
-//            var player by remember { mutableStateOf(Player.X) }
-//
-//            Button({ player = player.other() }) {
-//                Text("other player")
-//            }
-//            PlayerView(player)
+            if (showScoreDialog) {
+                ScoreDialog(game.score, { showScoreDialog = false })
+            }
         }
     }
 }
-
 
 
 

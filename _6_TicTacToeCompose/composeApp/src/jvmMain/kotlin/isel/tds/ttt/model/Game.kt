@@ -57,11 +57,26 @@ fun Game.canPlay(pos: Position): Boolean = !board.containsKey(pos)
 
 
 fun Game.restartGame(): Game {
-    check(this.gameState is Run)
-    return Game(
-        currentGameStarterPlayer = currentGameStarterPlayer.other(),
-        score = score.advance(this.gameState.turn.other())
-    )
+    return when (gameState) {
+        is Run -> Game(
+            currentGameStarterPlayer = currentGameStarterPlayer.other(),
+            score = score.advance(this.gameState.turn.other())
+        )
+
+        is Win, is Draw -> Game(
+            currentGameStarterPlayer = currentGameStarterPlayer.other(),
+            score = score
+        )
+    }
+//    check(this.gameState is Run)
+//    return Game(
+//        currentGameStarterPlayer = currentGameStarterPlayer.other(),
+//        score = score.advance(this.gameState.turn.other())
+//    )
+//    return Game(
+//        currentGameStarterPlayer = currentGameStarterPlayer.other(),
+//        score = score
+//    )
 }
 
 //fun Board.isWinner(p: Player): Boolean =
