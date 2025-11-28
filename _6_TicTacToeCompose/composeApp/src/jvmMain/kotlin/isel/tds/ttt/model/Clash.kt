@@ -39,13 +39,15 @@ fun Clash.join(name: Name): ClashRun {
 fun Clash.refresh(): ClashRun {
     check(this is ClashRun) { "Game not started" }
     val readGame = st.read(name)
-    checkNotNull(readGame) { "Game with name=$name does not exist" }
+    if (readGame == null) {
+        throw TTTNoStorageException()//"Game with name=$name does not exist")
+    }
     return ClashRun(this.st, name, sidePlayer, readGame)
 }
 
 fun Clash.new(): ClashRun {
     check(this is ClashRun) { "Game not started" }
-    return when (this.game.gameState) {
+    val newClash = when (this.game.gameState) {
         is Run -> {
             if (sidePlayer == game.gameState.turn) {
                 ClashRun(st, name, sidePlayer, game.restartGame())
@@ -56,4 +58,13 @@ fun Clash.new(): ClashRun {
 
         is Win, is Draw -> ClashRun(st, name, sidePlayer, game.restartGame())
     }
+    st.update(name, newClash.game)
+    return newClash
+}
+
+fun Clash.deleteIfIsOwner(): Clash {
+    if (this is ClashRun && sidePlayer == Player.X) {
+        st.delete(name)
+    }
+    return this
 }

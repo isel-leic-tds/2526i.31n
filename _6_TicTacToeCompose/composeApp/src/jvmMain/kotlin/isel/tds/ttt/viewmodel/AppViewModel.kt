@@ -9,28 +9,50 @@ import isel.tds.ttt.ui.compose.StartOrJoinType
 class AppViewModel(val st: GameStorage) {
     var clash by mutableStateOf(Clash(st))
         private set
-
-    //    var game by mutableStateOf(Game())
-//    private set
     var showScoreDialog by mutableStateOf(false)
         private set
     var startOrJoinDialog: StartOrJoinType? by mutableStateOf(null)
 
-    val run get() = clash as ClashRun
-    val isRun get() = clash is ClashRun
-    val game: Game get() = run.game
+    var errorMessage by mutableStateOf<String?>(null)
+
+    val clashRun get() = clash as ClashRun
+    val isClashRun get() = clash is ClashRun
+    val game: Game get() = clashRun.game
     val board: Board get() = game.board
-    fun newGame() {
-        clash = clash.new()
+
+    val canRefresh: Boolean
+        get() = isClashRun &&
+                (
+                        (game.gameState is Run &&
+                                clashRun.sidePlayer != (game.gameState as Run).turn
+                                )
+                                || game.gameState is Win
+                                || game.gameState is Draw
+                        )
+
+    //TODO Check Win and Draw cases
+
+    private fun exec(action: Clash.() -> Clash) {
+        try {
+            clash = clash.action()
+        } catch (e: TTTBaseFatalException) {
+            cleanup()
+            clash = Clash(clash.st)
+            errorMessage = e.message
+        } catch (e: Exception) {
+            errorMessage = e.message
+        }
     }
+
+    fun newGame() = exec { new() }
+    fun play(pos: Position): Unit = exec { play(pos) }
+    fun refresh() = exec { refresh() }
+    fun cleanup() = exec { deleteIfIsOwner() }
 
     fun toogleShowScore() {
         showScoreDialog = !showScoreDialog
     }
 
-    fun play(pos: Position): Unit {
-        clash = clash.play(pos)
-    }
 
     fun hideScoreDialog() {
         showScoreDialog = false
@@ -48,9 +70,6 @@ class AppViewModel(val st: GameStorage) {
         startOrJoinDialog = null
     }
 
-    fun refresh() {
-        clash = clash.refresh()
-    }
 
     fun startOrJoinGame(type: StartOrJoinType, name: Name) {
         if (type == StartOrJoinType.StartDialog)
@@ -61,4 +80,11 @@ class AppViewModel(val st: GameStorage) {
         hideStartOrJoinDialog()
     }
 
+
+    fun hideErrorDialog() {
+        errorMessage = null
+    }
+
 }
+
+

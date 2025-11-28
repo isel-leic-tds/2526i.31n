@@ -1,9 +1,7 @@
 package isel.tds.ttt.ui.compose
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,13 +9,14 @@ import androidx.compose.ui.unit.dp
 import isel.tds.ttt.model.Player
 import isel.tds.ttt.model.Score
 
+
 @Composable
-fun ScoreDialog(score: Score, closeDialodAction: () -> Unit) = AlertDialog(
-    onDismissRequest = closeDialodAction,
-    title = { Text("Score") },
-    text = { ScoreDialogContent(score) },
-    confirmButton = { TextButton(onClick = closeDialodAction) { Text("Close") } }
-)
+fun ScoreDialog(score: Score, hideDialog: () -> Unit) = BaseInfoDialog(
+    title = "Score",
+    closeAction = hideDialog
+) {
+    ScoreDialogContent(score)
+}
 
 @Composable
 fun ScoreDialogContent(score: Score) {

@@ -21,7 +21,7 @@ fun LabelledCell(text: String, player: Player?) {
 }
 
 @Composable
-fun StatusBarView(gameState: GameState) =
+fun StatusBarView(gameState: GameState, you: Player) =
     Row(
         Modifier.background(Color.LightGray)
             .width(GRID_SIZE)
@@ -29,10 +29,8 @@ fun StatusBarView(gameState: GameState) =
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-
-//        val text = "bla bla"
-//        val player = Player.X
-
+        LabelledCell("You:", you)
+        Spacer(Modifier.width(30.dp))
         val (text, player) = when (gameState) {
             is Run -> "Turn:" to gameState.turn
             is Draw -> "Draw" to null
