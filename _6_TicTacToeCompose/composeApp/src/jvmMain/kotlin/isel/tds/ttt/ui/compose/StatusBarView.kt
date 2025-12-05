@@ -21,7 +21,7 @@ fun LabelledCell(text: String, player: Player?) {
 }
 
 @Composable
-fun StatusBarView(gameState: GameState, you: Player) =
+fun StatusBarView(gameState: GameState, you: Player, name: Name) =
     Row(
         Modifier.background(Color.LightGray)
             .width(GRID_SIZE)
@@ -37,4 +37,6 @@ fun StatusBarView(gameState: GameState, you: Player) =
             is Win -> "Winner:" to gameState.winner
         }
         LabelledCell(text, player)
+        Spacer(Modifier.width(30.dp))
+        Text("on game ${name.toString()}")
     }

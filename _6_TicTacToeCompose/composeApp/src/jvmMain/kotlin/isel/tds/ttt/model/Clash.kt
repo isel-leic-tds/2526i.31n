@@ -1,6 +1,8 @@
 package isel.tds.ttt.model
 
 import isel.tds.ttt.storage.Storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 typealias GameStorage = Storage<Name, Game>
 
@@ -36,12 +38,17 @@ fun Clash.join(name: Name): ClashRun {
     return ClashRun(this.st, name, Player.O, readGame)
 }
 
-fun Clash.refresh(): ClashRun {
+suspend fun Clash.refresh(): ClashRun {
     check(this is ClashRun) { "Game not started" }
-    val readGame = st.read(name)
+    val readGame = withContext(Dispatchers.IO) {
+        Thread.sleep(2000)
+        st.read(name)
+    }
     if (readGame == null) {
         throw TTTNoStorageException()//"Game with name=$name does not exist")
     }
+    if (this.game == readGame)
+        throw NoChangesException()
     return ClashRun(this.st, name, sidePlayer, readGame)
 }
 

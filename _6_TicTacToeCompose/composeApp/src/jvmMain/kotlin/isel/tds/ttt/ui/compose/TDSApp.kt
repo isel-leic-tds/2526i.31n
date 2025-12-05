@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
@@ -13,8 +14,7 @@ import isel.tds.ttt.exithandling.ExitHandler
 import isel.tds.ttt.model.Game
 import isel.tds.ttt.model.Name
 import isel.tds.ttt.storage.GameSerializer
-import isel.tds.ttt.storage.mongo.MongoDriver
-import isel.tds.ttt.storage.mongo.MongoStorage
+import isel.tds.ttt.storage.TextFileStorage
 import isel.tds.ttt.viewmodel.AppViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -22,15 +22,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun FrameWindowScope.TDSApp() {
     MaterialTheme {
+        var scope = rememberCoroutineScope()
+        val vm = remember {
+            val st = TextFileStorage<Name, Game>("savedGames", GameSerializer)
+//                val driver: MongoDriver = MongoDriver("JogoGalo31N")
+//                val st = MongoStorage<Name, Game>("savedGames", driver, GameSerializer)
+            val myVm = AppViewModel(st, scope)
+            ExitHandler.registerExitHandler(myVm::cleanup)
+            myVm
+        }
         Column {
-            val vm = remember {
-//                val st = TextFileStorage<Name, Game>("savedGames", GameSerializer)
-                val driver: MongoDriver = MongoDriver("JogoGalo31N")
-                val st = MongoStorage<Name, Game>("savedGames", driver, GameSerializer)
-                val myVm = AppViewModel(st)
-                ExitHandler.registerExitHandler(myVm::cleanup)
-                myVm
-            }
             MenuBar {
                 Menu("Game") {
                     Item("Start clash", onClick = vm::showStartDialog)
@@ -44,7 +45,7 @@ fun FrameWindowScope.TDSApp() {
 
             if (vm.isClashRun) {
                 BoardView(vm.board, vm::play)//{ pos -> vm.play(pos) })
-                StatusBarView(vm.game.gameState, vm.clashRun.sidePlayer)
+                StatusBarView(vm.game.gameState, vm.clashRun.sidePlayer, vm.clashRun.name)
             } else {
                 Box(Modifier.size(GRID_SIZE, GRID_SIZE + STATUS_HEIGHT))
             }
@@ -56,6 +57,7 @@ fun FrameWindowScope.TDSApp() {
             }
             vm.errorMessage?.let { msg -> ErrorDialog(msg, vm::hideErrorDialog) }
         }
+        if (vm.isWaiting) WaitingIndicator()
     }
 }
 
