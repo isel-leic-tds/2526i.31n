@@ -5,17 +5,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import isel.tds.ttt.exithandling.ExitHandler
+import isel.tds.ttt.model.Draw
 import isel.tds.ttt.model.Game
 import isel.tds.ttt.model.Name
+import isel.tds.ttt.model.Win
 import isel.tds.ttt.storage.GameSerializer
 import isel.tds.ttt.storage.TextFileStorage
 import isel.tds.ttt.viewmodel.AppViewModel
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -58,6 +62,17 @@ fun FrameWindowScope.TDSApp() {
             vm.errorMessage?.let { msg -> ErrorDialog(msg, vm::hideErrorDialog) }
         }
         if (vm.isWaiting) WaitingIndicator()
+
+        if (vm.isClashRun) {
+            LaunchedEffect(vm.clashRun.game.gameState) {
+                if (vm.clashRun.game.gameState is Win
+                    || vm.clashRun.game.gameState is Draw
+                ) {
+                    delay(500)
+                    java.awt.Toolkit.getDefaultToolkit().beep()
+                }
+            }
+        }
     }
 }
 
