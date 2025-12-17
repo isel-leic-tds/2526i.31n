@@ -34,7 +34,7 @@ fun SlotMachineApp() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PlayerInputDetails(
-            nameGetter = {slotMachineViewModel.playerName},
+            nameGetter = slotMachineViewModel::playerName,//{slotMachineViewModel.playerName},
             nameSetter={name -> slotMachineViewModel.playerName=name})
         SlotMachine(
             slotState=slotMachineViewModel::slotState,
@@ -75,7 +75,7 @@ fun SlotMachine(slotState: () -> SlotState, isEnabled: () -> Boolean, play: () -
 @Composable
 fun AddSlot(slot: Byte){
     Image(
-        painter= painterResource(slot.toSlotImage().resource),
+        painter= painterResource(slot.toSlotImageResource()),
         contentDescription = null,
         modifier = Modifier.size(80.dp).clip(shape= RectangleShape).background(Color.White).padding(8.dp)
     )

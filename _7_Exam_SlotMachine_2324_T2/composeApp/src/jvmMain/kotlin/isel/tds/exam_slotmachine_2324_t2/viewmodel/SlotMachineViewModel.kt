@@ -18,5 +18,6 @@ class SlotMachineViewModel {
 
     fun isWinner() = slotState.isWinner()
 
-    fun isPlayerNameValid() = playerName.isNotBlank() && playerName.filter { !it.isWhitespace() }.length>=3
+    fun isPlayerNameValid() = playerName.isNotBlank()
+            && playerName.filter { !it.isWhitespace() }.length>=3
 }

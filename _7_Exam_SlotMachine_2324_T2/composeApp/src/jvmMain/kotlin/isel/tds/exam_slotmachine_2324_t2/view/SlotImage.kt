@@ -26,18 +26,18 @@ enum class SlotImage(val resource: DrawableResource) {
     BANANA(Res.drawable.banana);
 }
 
-fun Byte.toSlotImage(): SlotImage {
+fun Byte.toSlotImageResource(): DrawableResource {
     return when (this) {
-        0.toByte() -> SlotImage.APPLE
-        1.toByte() -> SlotImage.BAR
-        2.toByte() -> SlotImage.BELL
-        3.toByte() -> SlotImage.CHERRIES
-        4.toByte() -> SlotImage.DIAMOND
-        5.toByte() -> SlotImage.GRAPPES
-        6.toByte() -> SlotImage.LEMON
-        7.toByte() -> SlotImage.SEVEN
-        8.toByte() -> SlotImage.WATERMELON
-        9.toByte() -> SlotImage.BANANA
+        0.toByte() -> SlotImage.APPLE.resource
+        1.toByte() -> SlotImage.BAR.resource
+        2.toByte() -> SlotImage.BELL.resource
+        3.toByte() -> SlotImage.CHERRIES.resource
+        4.toByte() -> SlotImage.DIAMOND.resource
+        5.toByte() -> SlotImage.GRAPPES.resource
+        6.toByte() -> SlotImage.LEMON.resource
+        7.toByte() -> SlotImage.SEVEN.resource
+        8.toByte() -> SlotImage.WATERMELON.resource
+        9.toByte() -> SlotImage.BANANA.resource
         else -> throw IllegalArgumentException("Invalid slot value: $this")
     }
 }
